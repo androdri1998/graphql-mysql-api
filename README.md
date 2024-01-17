@@ -1,4 +1,4 @@
-# users-graphql-api
+# graphql-mysql-api
 
 This is a project to practice GraphQl and Node.js
 
