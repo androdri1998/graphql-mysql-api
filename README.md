@@ -8,6 +8,9 @@ This is a project to practice GraphQl and Node.js
 - @apollo/server
 - graphql
 - type-graphql
+- dotenv
+- typeorm
+- mysql
 
 # Requirements
 
@@ -153,8 +156,11 @@ input UpdateProfileInput {
 }
 
 type Profile {
+  createdAt: DateTimeISO!
   id: ID!
+  label: String!
   name: String!
+  updatedAt: DateTimeISO!
 }
 
 type Mutation {

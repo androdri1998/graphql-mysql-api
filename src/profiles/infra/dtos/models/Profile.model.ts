@@ -7,4 +7,13 @@ export class Profile {
 
   @Field()
   name: string;
+
+  @Field()
+  label: string;
+
+  @Field((type) => Date)
+  createdAt: string;
+
+  @Field((type) => Date)
+  updatedAt: string;
 }

@@ -1,4 +1,7 @@
 export interface ProfileDTO {
-  id: string;
+  id?: number;
   name: string;
+  label: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
