@@ -1,5 +1,10 @@
 import { ProfileDTO } from "../dtos/Profile.dto";
 
+export type IFindProfilesFilterDTO = {
+  limit: number;
+  page: number;
+};
+
 export interface IFindProfilesService {
-  execute(): Promise<ProfileDTO[]>;
+  execute(filter: IFindProfilesFilterDTO): Promise<ProfileDTO[]>;
 }

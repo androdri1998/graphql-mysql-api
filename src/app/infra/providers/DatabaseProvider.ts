@@ -29,7 +29,10 @@ class DatabaseProvider implements IDatabaseProvider {
     await this.dataSource.initialize();
   }
 
-  async raw<ReturnType>(query: string, values: unknown[]): Promise<ReturnType> {
+  async raw<ReturnType>(
+    query: string,
+    values: unknown[] = []
+  ): Promise<ReturnType> {
     const result = await this.dataSource.manager.query<ReturnType>(
       query,
       values

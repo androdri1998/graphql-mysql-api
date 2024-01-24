@@ -14,6 +14,7 @@ import { UpdateProfileFilterInput } from "../dtos/inputs/UpdateProfileFilter.inp
 import { UpdateProfileInput } from "../dtos/inputs/UpdateProfile.input";
 import { UdpateProfileService } from "../../services/implementations/UpdateProfile.service";
 import { databaseProvider } from "../../../app/infra/providers/DatabaseProvider";
+import { SearchProfilesFilterInput } from "../dtos/inputs/SearchProfilesFilter.input";
 
 @Resolver(() => Profile)
 export class ProfilesResolver {
@@ -28,11 +29,13 @@ export class ProfilesResolver {
   }
 
   @Query(() => [Profile], { nullable: "items" })
-  async profiles() {
+  async profiles(@Arg("data") filter: SearchProfilesFilterInput) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
-    // const findProfilesService = new FindProfilesService(profilesRepository);
-    // const profiles = await findProfilesService.execute();
-    // return profiles;
+    const findProfilesService = new FindProfilesService(profilesRepository);
+
+    const profiles = await findProfilesService.execute(filter);
+
+    return profiles;
   }
 
   @Mutation(() => Profile)

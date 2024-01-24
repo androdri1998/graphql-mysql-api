@@ -1,4 +1,5 @@
 import { ProfileDTO } from "../dtos/Profile.dto";
+import { IFindProfilesFilterDTO } from "../services/FindProfilesService";
 import {
   TUpdateProfileDTO,
   TUpdateProfileFilterDTO,
@@ -6,7 +7,7 @@ import {
 
 export interface ProfilesRepository {
   getById(id: number): Promise<ProfileDTO | null>;
-  index(): Promise<ProfileDTO[]>;
+  index(filter: IFindProfilesFilterDTO): Promise<ProfileDTO[]>;
   create(name: string): Promise<ProfileDTO>;
   deleteById(id: string): Promise<boolean | null>;
   udpateByIdOrName(

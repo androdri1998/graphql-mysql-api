@@ -5,6 +5,7 @@ import {
 } from "../../../app/providers/DatabaseProvider";
 import { ProfileDTO } from "../../dtos/Profile.dto";
 import { ProfilesRepository as IProfilesRepository } from "../../repositories/ProfilesRepository";
+import { IFindProfilesFilterDTO } from "../../services/FindProfilesService";
 import {
   TUpdateProfileDTO,
   TUpdateProfileFilterDTO,
@@ -28,10 +29,17 @@ export default class ProfilesRepository implements IProfilesRepository {
     return profile[0] || null;
   }
 
-  async index(): Promise<ProfileDTO[]> {
-    // return Object.values(this.databaseProvider).map((value) => value);
+  async index({ limit, page }: IFindProfilesFilterDTO): Promise<ProfileDTO[]> {
+    const offset = limit * page;
 
-    return [];
+    const profiles = await this.databaseProvider.raw<TQueryRows<ProfileDTO>>(
+      `
+      SELECT * FROM profile LIMIT ?, ?;
+    `,
+      [offset, limit]
+    );
+
+    return profiles;
   }
 
   async create(name: string): Promise<ProfileDTO> {
