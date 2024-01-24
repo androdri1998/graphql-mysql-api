@@ -29,6 +29,17 @@ export default class ProfilesRepository implements IProfilesRepository {
     return profile[0] || null;
   }
 
+  async getByName(name: string): Promise<ProfileDTO | null> {
+    const profile = await this.databaseProvider.raw<TQueryRows<ProfileDTO>>(
+      `
+      SELECT * FROM profile WHERE name=?;
+    `,
+      [name]
+    );
+
+    return profile[0] || null;
+  }
+
   async index({ limit, page }: IFindProfilesFilterDTO): Promise<ProfileDTO[]> {
     const offset = limit * page;
 
@@ -78,29 +89,38 @@ export default class ProfilesRepository implements IProfilesRepository {
 
   async udpateByIdOrName(
     filter: TUpdateProfileFilterDTO,
-    profile: TUpdateProfileDTO
+    { name }: TUpdateProfileDTO
   ): Promise<ProfileDTO> {
-    // const { id, name } = filter;
-    // let currentProfile: ProfileDTO | null = null;
-    // let updatedProfile: ProfileDTO | null = null;
-    // if (id) {
-    //   currentProfile = await this.getById(filter.id);
-    // } else if (name) {
-    //   currentProfile = Object.values(this.databaseProvider).find(
-    //     (profileItem) => profileItem.name === name
-    //   );
-    // } else {
-    //   currentProfile = null;
-    // }
-    // if (currentProfile) {
-    //   this.databaseProvider[currentProfile.id] = {
-    //     ...currentProfile,
-    //     ...profile,
-    //   };
-    //   updatedProfile = await this.getById(currentProfile.id);
-    // }
-    // return updatedProfile || null;
+    const id = filter.id ? parseInt(filter.id) : undefined;
+    const currentDate = new Date();
 
-    return null;
+    const profile = {
+      name,
+      label: `${name[0].toUpperCase()}${name.slice(1)}`,
+      updatedAt: currentDate,
+    };
+
+    await this.databaseProvider.raw<TInsertRow>(
+      `
+      UPDATE profile SET name = ?, label = ?, updatedAt = ?
+      WHERE id=? OR name=?;
+    `,
+      [
+        profile.name,
+        profile.label,
+        profile.updatedAt,
+        id,
+        filter.name?.toLowerCase(),
+      ]
+    );
+
+    let profileUpdated = null;
+    if (id) {
+      profileUpdated = await this.getById(id);
+    } else if (filter.name) {
+      profileUpdated = await this.getByName(profile.name);
+    }
+
+    return profileUpdated;
   }
 }

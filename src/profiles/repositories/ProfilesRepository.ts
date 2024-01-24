@@ -7,6 +7,7 @@ import {
 
 export interface ProfilesRepository {
   getById(id: number): Promise<ProfileDTO | null>;
+  getByName(name: string): Promise<ProfileDTO | null>;
   index(filter: IFindProfilesFilterDTO): Promise<ProfileDTO[]>;
   create(name: string): Promise<ProfileDTO>;
   deleteById(id: string): Promise<boolean>;

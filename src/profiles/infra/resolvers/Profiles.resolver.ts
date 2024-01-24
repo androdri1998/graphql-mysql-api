@@ -64,8 +64,10 @@ export class ProfilesResolver {
     @Arg("profile") profile: UpdateProfileInput
   ) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
-    // const updateProfileService = new UdpateProfileService(profilesRepository);
-    // const profileUpdated = await updateProfileService.execute(filter, profile);
-    // return profileUpdated;
+    const updateProfileService = new UdpateProfileService(profilesRepository);
+
+    const profileUpdated = await updateProfileService.execute(filter, profile);
+
+    return profileUpdated;
   }
 }
