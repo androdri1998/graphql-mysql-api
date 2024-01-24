@@ -3,5 +3,5 @@ export type TDeleteProfileDTO = {
 };
 
 export interface IDeleteProfileService {
-  execute(data: TDeleteProfileDTO): Promise<boolean | null>;
+  execute(data: TDeleteProfileDTO): Promise<boolean>;
 }

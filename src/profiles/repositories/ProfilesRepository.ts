@@ -9,7 +9,7 @@ export interface ProfilesRepository {
   getById(id: number): Promise<ProfileDTO | null>;
   index(filter: IFindProfilesFilterDTO): Promise<ProfileDTO[]>;
   create(name: string): Promise<ProfileDTO>;
-  deleteById(id: string): Promise<boolean | null>;
+  deleteById(id: string): Promise<boolean>;
   udpateByIdOrName(
     filter: TUpdateProfileFilterDTO,
     profile: TUpdateProfileDTO

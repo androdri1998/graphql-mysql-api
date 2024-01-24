@@ -48,12 +48,14 @@ export class ProfilesResolver {
     return newProfile;
   }
 
-  @Mutation(() => Boolean, { nullable: true })
+  @Mutation(() => Boolean)
   async deleteProfile(@Arg("filter") filter: DeleteProfileInput) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
-    // const deleteProfileService = new DeleteProfileService(profilesRepository);
-    // const isDeleted = await deleteProfileService.execute(filter);
-    // return isDeleted;
+    const deleteProfileService = new DeleteProfileService(profilesRepository);
+
+    const isDeleted = await deleteProfileService.execute(filter);
+
+    return isDeleted;
   }
 
   @Mutation(() => Profile, { nullable: true })

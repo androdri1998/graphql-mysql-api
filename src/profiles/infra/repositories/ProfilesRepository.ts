@@ -65,15 +65,15 @@ export default class ProfilesRepository implements IProfilesRepository {
     return profile;
   }
 
-  async deleteById(id: string): Promise<boolean | null> {
-    // const profile = await this.getById(id);
-    // if (!profile) {
-    //   return null;
-    // }
-    // delete this.databaseProvider[id];
-    // return true;
+  async deleteById(id: string): Promise<boolean> {
+    await this.databaseProvider.raw<TQueryRows<ProfileDTO>>(
+      `
+      DELETE FROM profile WHERE id=?;
+    `,
+      [id]
+    );
 
-    return null;
+    return true;
   }
 
   async udpateByIdOrName(

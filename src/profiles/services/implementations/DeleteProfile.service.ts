@@ -11,7 +11,7 @@ export class DeleteProfileService implements IDeleteProfileService {
     this.profilesRepository = profilesRepository;
   }
 
-  async execute(data: TDeleteProfileDTO): Promise<boolean | null> {
+  async execute(data: TDeleteProfileDTO): Promise<boolean> {
     return await this.profilesRepository.deleteById(data.id);
   }
 }
