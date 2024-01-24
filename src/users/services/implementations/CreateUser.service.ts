@@ -1,4 +1,4 @@
-import { UserDTO, UserStatus } from "../../dtos/User.dto";
+import { UserDTO } from "../../dtos/User.dto";
 import { UsersRepository } from "../../repositories/UsersRepository";
 import { CreateUserDTO, ICreateUserService } from "../CreateUserService";
 
@@ -18,11 +18,9 @@ export class CreateUserService implements ICreateUserService {
     const userRaw = {
       name: user.name,
       email: user.email,
-      age: user.age,
-      salary_real: null,
-      vip: false,
-      status: UserStatus.ACTIVE,
-      profile_id: "1",
+      password: "",
+      active: true,
+      profile_id: 1,
     };
 
     const userCreated = await this.usersRepository.create(userRaw);

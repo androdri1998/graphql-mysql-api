@@ -12,7 +12,6 @@ import { UserInput } from "../dtos/inputs/User.input";
 import { SearchUserInput } from "../dtos/inputs/SearchUser.input";
 import UsersRepository from "../repositories/UsersRepository";
 import FindUsersService from "../../services/implementations/FindUsers.service";
-import ConvertSalaryService from "../../services/implementations/ConvertSalary.service";
 import FindUserService from "../../services/implementations/FindUser.service";
 import ProfilesRepository from "../../../profiles/infra/repositories/ProfilesRepository";
 import FindProfileService from "../../../profiles/services/implementations/FindProfile.service";
@@ -29,11 +28,13 @@ import { databaseProvider } from "../../../app/infra/providers/DatabaseProvider"
 @Resolver(() => User)
 export class UsersResolver {
   @Query(() => User, { nullable: true })
-  async user(@Arg("data") user: SearchUserInput) {
+  async user(@Arg("data") userData: SearchUserInput) {
     const usersRepository = new UsersRepository(databaseProvider);
-    // const findUserService = new FindUserService(usersRepository);
-    // const users = await findUserService.execute(user.id);
-    // return users;
+    const findUserService = new FindUserService(usersRepository);
+
+    const user = await findUserService.execute(parseInt(userData.id));
+
+    return user;
   }
 
   @Query(() => [User], { nullable: "items" })
@@ -75,20 +76,11 @@ export class UsersResolver {
     // return userUpdated;
   }
 
-  @FieldResolver()
-  salary(@Root() user: UserInput) {
-    const convertSalaryService = new ConvertSalaryService();
-
-    const salary = convertSalaryService.execute(user);
-
-    return salary;
-  }
-
-  @FieldResolver(() => Profile)
-  async profile(@Root() user: UserInput) {
-    const profilesRepository = new ProfilesRepository(databaseProvider);
-    // const findProfileService = new FindProfileService(profilesRepository);
-    // const profileFound = await findProfileService.execute(user.profile_id);
-    // return profileFound;
-  }
+  // @FieldResolver(() => Profile)
+  // async profile(@Root() user: UserInput) {
+  //   const profilesRepository = new ProfilesRepository(databaseProvider);
+  //   // const findProfileService = new FindProfileService(profilesRepository);
+  //   // const profileFound = await findProfileService.execute(user.profile_id);
+  //   // return profileFound;
+  // }
 }

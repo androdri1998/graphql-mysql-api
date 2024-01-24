@@ -1,5 +1,8 @@
 import * as UuidHelper from "../../../app/infra/helpers/UuidHelper.helper";
-import { IDatabaseProvider } from "../../../app/providers/DatabaseProvider";
+import {
+  IDatabaseProvider,
+  TQueryRows,
+} from "../../../app/providers/DatabaseProvider";
 import { UserDTO } from "../../dtos/User.dto";
 import * as UserHelper from "../../helpers/UserHelper";
 import {
@@ -18,11 +21,15 @@ export default class UsersRepository implements IUsersRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async getById(id: string): Promise<UserDTO | null> {
-    // const foundUser = this.databaseProvider.find((user) => user.id === id);
-    // return foundUser || null;
+  async getById(id: number): Promise<UserDTO | null> {
+    const user = await this.databaseProvider.raw<TQueryRows<UserDTO>>(
+      `
+      SELECT * FROM user WHERE id=?;
+    `,
+      [id]
+    );
 
-    return null;
+    return user[0] || null;
   }
 
   async getByEmail(email: string): Promise<UserDTO | null> {

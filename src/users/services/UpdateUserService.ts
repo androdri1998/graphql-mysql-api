@@ -1,4 +1,4 @@
-import { UserDTO, UserStatus } from "../dtos/User.dto";
+import { UserDTO } from "../dtos/User.dto";
 export type TUpdateUserFilterDTO = {
   id?: string;
   email?: string;
@@ -7,10 +7,8 @@ export type TUpdateUserFilterDTO = {
 export type TUpdateUserDTO = {
   name?: string;
   email?: string;
-  age?: number;
-  salary_real?: number;
-  vip?: boolean;
-  status?: UserStatus;
+  password?: string;
+  active?: boolean;
   profile_id?: string;
 };
 

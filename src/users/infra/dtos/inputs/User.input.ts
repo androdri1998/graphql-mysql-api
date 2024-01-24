@@ -1,5 +1,4 @@
-import { ID, Int, Float, Field, ObjectType, InputType } from "type-graphql";
-import { UserStatus } from "../../../dtos/User.dto";
+import { ID, Int, Float, Field, InputType } from "type-graphql";
 
 @InputType()
 export class UserInput {
@@ -12,18 +11,12 @@ export class UserInput {
   @Field()
   email: string;
 
-  @Field((type) => Int)
-  age: number;
-
-  @Field((type) => Float)
-  salary_real: number;
-
   @Field()
-  vip: boolean;
+  active: boolean;
 
-  @Field((type) => ID)
-  profile_id: string;
+  @Field((type) => Date)
+  createdAt: boolean;
 
-  @Field((type) => UserStatus)
-  status: UserStatus;
+  @Field((type) => Date)
+  updatedAt: boolean;
 }

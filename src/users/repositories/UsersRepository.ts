@@ -7,7 +7,7 @@ import {
 export type TCreateUserDTO = Omit<UserDTO, "id">;
 
 export interface UsersRepository {
-  getById(id: string): Promise<UserDTO | null>;
+  getById(id: number): Promise<UserDTO | null>;
   index(): Promise<UserDTO[]>;
   create(user: TCreateUserDTO): Promise<UserDTO>;
   getByEmail(email: string): Promise<UserDTO | null>;

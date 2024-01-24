@@ -9,7 +9,7 @@ export default class FindUserService implements IFindUserService {
     this.usersRepository = usersRepository;
   }
 
-  async execute(id: string): Promise<UserDTO | null> {
+  async execute(id: number): Promise<UserDTO | null> {
     const user = await this.usersRepository.getById(id);
     return user;
   }

@@ -65,16 +65,12 @@ Run `$ npm run dev` to start application in watching mode.
 ## Users
 
 ```
-enum UserStatus {
-  ACTIVE
-  BLOCKED
-  INACTIVE
-}
+scalar DateTimeISO
 
 input AddUserInput {
-  age: Int!
   email: String!
   name: String!
+  password: String!
 }
 
 input DeleteUserInput {
@@ -86,32 +82,32 @@ input SearchUserInput {
   id: ID!
 }
 
-input UpdateUserInput {
-  age: Int
+input UpdateUserFilterInput {
   email: String
   id: ID
+}
+
+input UpdateUserInput {
+  active: Boolean
+  email: String
   name: String
+  password: String
   profile_id: ID
-  salary_real: Float
-  status: UserStatus
-  vip: Boolean
 }
 
 type User {
-  age: Int
+  active: Boolean!
+  createdAt: DateTimeISO!
   email: String!
   id: ID!
   name: String!
-  profile: Profile!
-  salary: Float
-  status: UserStatus!
-  vip: Boolean
+  updatedAt: DateTimeISO!
 }
 
 type Mutation {
   addUser(data: AddUserInput!): User!
   deleteUser(data: DeleteUserInput!): Boolean
-  updateUser(data: UpdateUserInput!): User
+  updateUser(filter: UpdateUserFilterInput!, user: UpdateUserInput!): User
 }
 
 type Query {
@@ -129,7 +125,7 @@ type Query {
 
 - addUser(data: AddUserInput!): User!
 - deleteUser(data: DeleteUserInput!): Boolean
-- updateUser(data: UpdateUserInput!): User
+- updateUser(filter: UpdateUserFilterInput!, user: UpdateUserInput!): User
 
 ## Profiles
 

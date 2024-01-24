@@ -1,5 +1,4 @@
-import { ID, Int, Float, Field, ObjectType, InputType } from "type-graphql";
-import { UserStatus } from "../../../dtos/User.dto";
+import { ID, Field, InputType } from "type-graphql";
 
 @InputType()
 export class UpdateUserInput {
@@ -9,18 +8,12 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   email: string;
 
-  @Field((type) => Int, { nullable: true })
-  age: number;
-
-  @Field((type) => Float, { nullable: true })
-  salary_real: number;
-
   @Field({ nullable: true })
-  vip: boolean;
+  password: string;
 
   @Field((type) => ID, { nullable: true })
   profile_id: string;
 
-  @Field((type) => UserStatus, { nullable: true })
-  status: UserStatus;
+  @Field({ nullable: true })
+  active: boolean;
 }

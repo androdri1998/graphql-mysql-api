@@ -3,7 +3,7 @@ import { UserDTO } from "../dtos/User.dto";
 export type CreateUserDTO = {
   name: string;
   email: string;
-  age: number;
+  password: string;
 };
 
 export interface ICreateUserService {

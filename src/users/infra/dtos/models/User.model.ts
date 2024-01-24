@@ -1,17 +1,4 @@
-import {
-  ID,
-  Int,
-  Float,
-  Field,
-  ObjectType,
-  registerEnumType,
-} from "type-graphql";
-import { UserStatus } from "../../../dtos/User.dto";
-
-registerEnumType(UserStatus, {
-  name: "UserStatus",
-  description: "User status",
-});
+import { ID, Field, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class User {
@@ -24,15 +11,12 @@ export class User {
   @Field()
   email: string;
 
-  @Field((type) => Int, { nullable: true })
-  age?: number;
+  @Field()
+  active: boolean;
 
-  @Field((type) => Float, { nullable: true })
-  salary?: number;
+  @Field((type) => Date)
+  createdAt: boolean;
 
-  @Field({ nullable: true })
-  vip?: boolean;
-
-  @Field((type) => UserStatus)
-  status?: UserStatus;
+  @Field((type) => Date)
+  updatedAt: boolean;
 }
