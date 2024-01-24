@@ -6,3 +6,5 @@ export interface IDatabaseProvider {
 export type TInsertRow = {
   insertId: number;
 };
+
+export type TQueryRows<T> = T[];

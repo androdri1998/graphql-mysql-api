@@ -1,6 +1,7 @@
 import {
   IDatabaseProvider,
   TInsertRow,
+  TQueryRows,
 } from "../../../app/providers/DatabaseProvider";
 import { ProfileDTO } from "../../dtos/Profile.dto";
 import { ProfilesRepository as IProfilesRepository } from "../../repositories/ProfilesRepository";
@@ -16,11 +17,15 @@ export default class ProfilesRepository implements IProfilesRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async getById(id: string): Promise<ProfileDTO | null> {
-    // const profile = this.databaseProvider[id];
-    // return profile || null;
+  async getById(id: number): Promise<ProfileDTO | null> {
+    const profile = await this.databaseProvider.raw<TQueryRows<ProfileDTO>>(
+      `
+      SELECT * FROM profile WHERE id=?;
+    `,
+      [id]
+    );
 
-    return null;
+    return profile[0] || null;
   }
 
   async index(): Promise<ProfileDTO[]> {

@@ -20,9 +20,11 @@ export class ProfilesResolver {
   @Query(() => Profile, { nullable: true })
   async profile(@Arg("data") profile: SearchProfileInput) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
-    // const findProfileService = new FindProfileService(profilesRepository);
-    // const profileFound = await findProfileService.execute(profile.id);
-    // return profileFound;
+    const findProfileService = new FindProfileService(profilesRepository);
+
+    const profileFound = await findProfileService.execute(parseInt(profile.id));
+
+    return profileFound;
   }
 
   @Query(() => [Profile], { nullable: "items" })

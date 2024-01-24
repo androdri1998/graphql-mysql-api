@@ -9,7 +9,7 @@ export default class FindProfileService implements IFindProfileService {
     this.profilesRepository = profilesRepository;
   }
 
-  async execute(id: string): Promise<ProfileDTO | null> {
+  async execute(id: number): Promise<ProfileDTO | null> {
     const profile = await this.profilesRepository.getById(id);
     return profile;
   }
