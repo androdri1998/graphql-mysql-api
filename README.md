@@ -105,6 +105,11 @@ type User {
   updatedAt: DateTimeISO!
 }
 
+input SearchUsersInput {
+  limit: Float!
+  page: Float!
+}
+
 type Mutation {
   addUser(data: AddUserInput!): User!
   deleteUser(data: DeleteUserInput!): Boolean
@@ -113,14 +118,14 @@ type Mutation {
 
 type Query {
   user(data: SearchUserInput!): User
-  users: [User]!
+  users(data: SearchUsersInput!): [User]!
 }
 ```
 
 ### Queries available
 
 - user(data: SearchUserInput!): User
-- users: [User]!
+- users(data: SearchUsersInput!): [User]!
 
 ### Mutations available
 

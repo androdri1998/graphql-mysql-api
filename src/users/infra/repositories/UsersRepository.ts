@@ -9,6 +9,7 @@ import {
   TCreateUserDTO,
   UsersRepository as IUsersRepository,
 } from "../../repositories/UsersRepository";
+import { IFindUsersDTO } from "../../services/FindUsersService";
 import {
   TUpdateUserDTO,
   TUpdateUserFilterDTO,
@@ -32,10 +33,16 @@ export default class UsersRepository implements IUsersRepository {
     return user[0] || null;
   }
 
-  async index(): Promise<UserDTO[]> {
-    // return Object.values(this.databaseProvider).map((value) => value);
+  async index(filter: IFindUsersDTO): Promise<UserDTO[]> {
+    const offset = filter.limit * filter.page;
+    const users = await this.databaseProvider.raw<TQueryRows<UserDTO>>(
+      `
+      SELECT * FROM user limit ?, ?;
+    `,
+      [offset, filter.limit]
+    );
 
-    return [];
+    return users;
   }
   async create(userDTO: TCreateUserDTO): Promise<UserDTO> {
     // const user: UserDTO = { ...userDTO, id: UuidHelper.generate() };

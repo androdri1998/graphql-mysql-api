@@ -24,6 +24,7 @@ import { UpdateUserService } from "../../services/implementations/UpdateUser.ser
 import { UpdateUserInput } from "../dtos/inputs/UpdateUser.input";
 import { UpdateUserFilterInput } from "../dtos/inputs/UpdateUserFilter.input";
 import { databaseProvider } from "../../../app/infra/providers/DatabaseProvider";
+import { SearchUsersInput } from "../dtos/inputs/SearchUsers.input";
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -38,11 +39,13 @@ export class UsersResolver {
   }
 
   @Query(() => [User], { nullable: "items" })
-  async users() {
+  async users(@Arg("data") filter: SearchUsersInput) {
     const usersRepository = new UsersRepository(databaseProvider);
-    // const findUsersService = new FindUsersService(usersRepository);
-    // const users = await findUsersService.execute();
-    // return users;
+    const findUsersService = new FindUsersService(usersRepository);
+
+    const users = await findUsersService.execute(filter);
+
+    return users;
   }
 
   @Mutation(() => User)

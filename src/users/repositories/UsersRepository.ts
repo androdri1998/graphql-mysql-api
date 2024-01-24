@@ -1,4 +1,5 @@
 import { UserDTO } from "../dtos/User.dto";
+import { IFindUsersDTO } from "../services/FindUsersService";
 import {
   TUpdateUserDTO,
   TUpdateUserFilterDTO,
@@ -14,7 +15,7 @@ export type TCreateUserDTO = {
 
 export interface UsersRepository {
   getById(id: number): Promise<UserDTO | null>;
-  index(): Promise<UserDTO[]>;
+  index(filter: IFindUsersDTO): Promise<UserDTO[]>;
   create(user: TCreateUserDTO): Promise<UserDTO>;
   deleteByIdOrEmail(identifier: string): Promise<Boolean | null>;
   updateById(
