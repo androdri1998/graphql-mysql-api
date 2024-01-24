@@ -4,13 +4,18 @@ import {
   TUpdateUserFilterDTO,
 } from "../services/UpdateUserService";
 
-export type TCreateUserDTO = Omit<UserDTO, "id">;
+export type TCreateUserDTO = {
+  name: string;
+  email: string;
+  password: string;
+  active: boolean;
+  profile_id: number;
+};
 
 export interface UsersRepository {
   getById(id: number): Promise<UserDTO | null>;
   index(): Promise<UserDTO[]>;
   create(user: TCreateUserDTO): Promise<UserDTO>;
-  getByEmail(email: string): Promise<UserDTO | null>;
   deleteByIdOrEmail(identifier: string): Promise<Boolean | null>;
   updateById(
     filter: TUpdateUserFilterDTO,

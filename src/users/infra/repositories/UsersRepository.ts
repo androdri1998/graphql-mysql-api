@@ -32,15 +32,6 @@ export default class UsersRepository implements IUsersRepository {
     return user[0] || null;
   }
 
-  async getByEmail(email: string): Promise<UserDTO | null> {
-    // const foundUser = this.databaseProvider.find(
-    //   (user) => user.email === email
-    // );
-    // return foundUser || null;
-
-    return null;
-  }
-
   async index(): Promise<UserDTO[]> {
     // return Object.values(this.databaseProvider).map((value) => value);
 
