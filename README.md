@@ -11,6 +11,7 @@ This is a project to practice GraphQl and Node.js
 - dotenv
 - typeorm
 - mysql
+- bcrypt
 
 # Requirements
 
