@@ -25,12 +25,20 @@ import { UpdateUserInput } from "../dtos/inputs/UpdateUser.input";
 import { UpdateUserFilterInput } from "../dtos/inputs/UpdateUserFilter.input";
 import { databaseProvider } from "../../../app/infra/providers/DatabaseProvider";
 import { SearchUsersInput } from "../dtos/inputs/SearchUsers.input";
+import UserProfilesRepository from "../repositories/UserProfileRepository";
+import { HashProvider } from "../../../app/infra/providers/HashProvider";
 
 @Resolver(() => User)
 export class UsersResolver {
   @Query(() => User, { nullable: true })
   async user(@Arg("data") userData: SearchUserInput) {
-    const usersRepository = new UsersRepository(databaseProvider);
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const hashProvider = new HashProvider();
+    const usersRepository = new UsersRepository(
+      databaseProvider,
+      userProfilesRepository,
+      hashProvider
+    );
     const findUserService = new FindUserService(usersRepository);
 
     const user = await findUserService.execute(parseInt(userData.id));
@@ -40,7 +48,13 @@ export class UsersResolver {
 
   @Query(() => [User], { nullable: "items" })
   async users(@Arg("data") filter: SearchUsersInput) {
-    const usersRepository = new UsersRepository(databaseProvider);
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const hashProvider = new HashProvider();
+    const usersRepository = new UsersRepository(
+      databaseProvider,
+      userProfilesRepository,
+      hashProvider
+    );
     const findUsersService = new FindUsersService(usersRepository);
 
     const users = await findUsersService.execute(filter);
@@ -50,17 +64,31 @@ export class UsersResolver {
 
   @Mutation(() => User)
   async addUser(@Arg("data") newUser: AddUserInput) {
-    const usersRepository = new UsersRepository(databaseProvider);
-    // const createUserService = new CreateUserService(usersRepository);
-    // const user = await createUserService.execute(newUser);
-    // return user;
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const hashProvider = new HashProvider();
+    const usersRepository = new UsersRepository(
+      databaseProvider,
+      userProfilesRepository,
+      hashProvider
+    );
+    const createUserService = new CreateUserService(usersRepository);
+
+    const user = await createUserService.execute(newUser);
+
+    return user;
   }
 
   @Mutation(() => Boolean, {
     nullable: true,
   })
   async deleteUser(@Arg("data") user: DeleteUserInput) {
-    const usersRepository = new UsersRepository(databaseProvider);
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const hashProvider = new HashProvider();
+    const usersRepository = new UsersRepository(
+      databaseProvider,
+      userProfilesRepository,
+      hashProvider
+    );
     // const deleteUserService = new DeleteUserService(usersRepository);
     // const isUserDeleted = await deleteUserService.execute(user);
     // return isUserDeleted;
@@ -73,7 +101,13 @@ export class UsersResolver {
     @Arg("filter") filter: UpdateUserFilterInput,
     @Arg("user") user: UpdateUserInput
   ) {
-    const usersRepository = new UsersRepository(databaseProvider);
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const hashProvider = new HashProvider();
+    const usersRepository = new UsersRepository(
+      databaseProvider,
+      userProfilesRepository,
+      hashProvider
+    );
     // const updateUserService = new UpdateUserService(usersRepository);
     // const userUpdated = await updateUserService.execute(filter, user);
     // return userUpdated;

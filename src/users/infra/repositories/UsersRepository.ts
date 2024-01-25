@@ -1,10 +1,13 @@
 import * as UuidHelper from "../../../app/infra/helpers/UuidHelper.helper";
 import {
   IDatabaseProvider,
+  TInsertRow,
   TQueryRows,
 } from "../../../app/providers/DatabaseProvider";
+import { IHashProvider } from "../../../app/providers/HashProvider";
 import { UserDTO } from "../../dtos/User.dto";
 import * as UserHelper from "../../helpers/UserHelper";
+import { IUserProfilesRepository } from "../../repositories/UserProfileRepository";
 import {
   TCreateUserDTO,
   UsersRepository as IUsersRepository,
@@ -17,9 +20,17 @@ import {
 
 export default class UsersRepository implements IUsersRepository {
   databaseProvider: IDatabaseProvider;
+  hashProvider: IHashProvider;
+  userProfilesRepository: IUserProfilesRepository;
 
-  constructor(databaseProvider: IDatabaseProvider) {
+  constructor(
+    databaseProvider: IDatabaseProvider,
+    userProfilesRepository: IUserProfilesRepository,
+    hashProvider: IHashProvider
+  ) {
     this.databaseProvider = databaseProvider;
+    this.hashProvider = hashProvider;
+    this.userProfilesRepository = userProfilesRepository;
   }
 
   async getById(id: number): Promise<UserDTO | null> {
@@ -44,12 +55,46 @@ export default class UsersRepository implements IUsersRepository {
 
     return users;
   }
-  async create(userDTO: TCreateUserDTO): Promise<UserDTO> {
-    // const user: UserDTO = { ...userDTO, id: UuidHelper.generate() };
-    // this.databaseProvider.push(user);
-    // return user;
 
-    return {} as UserDTO;
+  async create(userDTO: TCreateUserDTO): Promise<UserDTO> {
+    const hash = await this.hashProvider.generate(userDTO.password);
+    const currentDate = new Date();
+
+    const user = {
+      name: userDTO.name,
+      email: userDTO.email,
+      password: hash,
+      active: userDTO.active,
+      createdAt: currentDate,
+      updatedAt: currentDate,
+    };
+
+    const userResponse = await this.databaseProvider.raw<TInsertRow>(
+      `
+      INSERT INTO user(name, email, password, active, createdAt, updatedAt)
+      VALUES(?, ?, ?, ?, ?, ?);
+    `,
+      [
+        user.name,
+        user.email,
+        user.password,
+        user.active,
+        user.createdAt,
+        user.updatedAt,
+      ]
+    );
+
+    const userCreated: UserDTO = {
+      ...user,
+      id: userResponse.insertId,
+    };
+
+    await this.userProfilesRepository.create(
+      userCreated.id,
+      userDTO.profile_id
+    );
+
+    return userCreated;
   }
 
   async deleteByIdOrEmail(identifier: string): Promise<Boolean | null> {
