@@ -1,4 +1,3 @@
-import * as UuidHelper from "../../../app/infra/helpers/UuidHelper.helper";
 import {
   IDatabaseProvider,
   TInsertRow,
@@ -12,10 +11,7 @@ import {
   UsersRepository as IUsersRepository,
 } from "../../repositories/UsersRepository";
 import { IFindUsersDTO } from "../../services/FindUsersService";
-import {
-  TUpdateUserDTO,
-  TUpdateUserFilterDTO,
-} from "../../services/UpdateUserService";
+import { TUpdateUserDTO } from "../../services/UpdateUserService";
 
 export default class UsersRepository implements IUsersRepository {
   databaseProvider: IDatabaseProvider;

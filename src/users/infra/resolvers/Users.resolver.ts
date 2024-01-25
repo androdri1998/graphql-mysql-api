@@ -14,7 +14,6 @@ import UsersRepository from "../repositories/UsersRepository";
 import FindUsersService from "../../services/implementations/FindUsers.service";
 import FindUserService from "../../services/implementations/FindUser.service";
 import ProfilesRepository from "../../../profiles/infra/repositories/ProfilesRepository";
-import FindProfileService from "../../../profiles/services/implementations/FindProfile.service";
 import { Profile } from "../../../profiles/infra/dtos/models/Profile.model";
 import { AddUserInput } from "../dtos/inputs/AddUser.input";
 import { CreateUserService } from "../../services/implementations/CreateUser.service";
@@ -27,6 +26,7 @@ import { databaseProvider } from "../../../app/infra/providers/DatabaseProvider"
 import { SearchUsersInput } from "../dtos/inputs/SearchUsers.input";
 import UserProfilesRepository from "../repositories/UserProfileRepository";
 import { HashProvider } from "../../../app/infra/providers/HashProvider";
+import FindProfileFromUserService from "../../../profiles/services/implementations/FindProfileFromUser.service";
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -117,11 +117,17 @@ export class UsersResolver {
     return userUpdated;
   }
 
-  // @FieldResolver(() => Profile)
-  // async profile(@Root() user: UserInput) {
-  //   const profilesRepository = new ProfilesRepository(databaseProvider);
-  //   // const findProfileService = new FindProfileService(profilesRepository);
-  //   // const profileFound = await findProfileService.execute(user.profile_id);
-  //   // return profileFound;
-  // }
+  @FieldResolver(() => Profile)
+  async profile(@Root() user: UserInput) {
+    const profilesRepository = new ProfilesRepository(databaseProvider);
+    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
+    const findProfileFromUserService = new FindProfileFromUserService(
+      profilesRepository,
+      userProfilesRepository
+    );
+
+    const profile = await findProfileFromUserService.execute(parseInt(user.id));
+
+    return profile;
+  }
 }
