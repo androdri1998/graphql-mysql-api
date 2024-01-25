@@ -14,9 +14,15 @@ export class UpdateUserService implements IUpdateUserService {
   }
 
   async execute(
-    filter: TUpdateUserFilterDTO,
+    { email, id }: TUpdateUserFilterDTO,
     user: TUpdateUserDTO
   ): Promise<UserDTO> {
-    return await this.usersRepository.updateById(filter, user);
+    if (id) {
+      return await this.usersRepository.updateById(parseInt(id), user);
+    }
+
+    if (email) {
+      return await this.usersRepository.updateByEmail(email, user);
+    }
   }
 }

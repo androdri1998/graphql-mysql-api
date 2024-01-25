@@ -6,7 +6,6 @@ import {
 } from "../../../app/providers/DatabaseProvider";
 import { IHashProvider } from "../../../app/providers/HashProvider";
 import { UserDTO } from "../../dtos/User.dto";
-import * as UserHelper from "../../helpers/UserHelper";
 import { IUserProfilesRepository } from "../../repositories/UserProfileRepository";
 import {
   TCreateUserDTO,
@@ -133,29 +132,96 @@ export default class UsersRepository implements IUsersRepository {
     return true;
   }
 
-  async updateById(
-    filter: TUpdateUserFilterDTO,
-    user: TUpdateUserDTO
-  ): Promise<UserDTO> {
-    // const identifier = filter.id || filter.email;
-    // if (!identifier) {
-    //   return null;
-    // }
-    // const userIndex = UserHelper.findByIdOrEmail(
-    //   identifier,
-    //   this.databaseProvider
-    // );
-    // if (userIndex < 0) {
-    //   return null;
-    // }
-    // const currentUser = this.databaseProvider[userIndex];
-    // const userUpdated = {
-    //   ...currentUser,
-    //   ...user,
-    // };
-    // this.databaseProvider.splice(userIndex, 1, userUpdated);
-    // return userUpdated;
+  async updateById(id: number, userData: TUpdateUserDTO): Promise<UserDTO> {
+    const hash = userData.password
+      ? await this.hashProvider.generate(userData.password)
+      : undefined;
+    const user = await this.getById(id);
 
-    return {} as UserDTO;
+    const getValue = (firstValue, secondValue) => {
+      return firstValue !== undefined ? firstValue : secondValue;
+    };
+
+    const userUpdated: UserDTO = {
+      id,
+      active: getValue(userData.active, user.active),
+      email: getValue(userData.email, user.email),
+      name: getValue(userData.name, user.name),
+      password: getValue(hash, user.password),
+      createdAt: user.createdAt,
+      updatedAt: new Date(),
+    };
+
+    await this.databaseProvider.raw<TInsertRow>(
+      `
+      UPDATE user SET name = ?, email = ?, password = ?, active = ?, updatedAt = ?
+      WHERE id=?;
+    `,
+      [
+        userUpdated.name,
+        userUpdated.email,
+        userUpdated.password,
+        userUpdated.active,
+        userUpdated.updatedAt,
+        userUpdated.id,
+      ]
+    );
+
+    if (userData.profile_id) {
+      await this.userProfilesRepository.updateByUserId(
+        user.id,
+        parseInt(userData.profile_id)
+      );
+    }
+
+    return userUpdated;
+  }
+
+  async updateByEmail(
+    email: string,
+    userData: TUpdateUserDTO
+  ): Promise<UserDTO> {
+    const hash = userData.password
+      ? await this.hashProvider.generate(userData.password)
+      : undefined;
+    const user = await this.getByEmail(email);
+
+    const getValue = (firstValue, secondValue) => {
+      return firstValue !== undefined ? firstValue : secondValue;
+    };
+
+    const userUpdated: UserDTO = {
+      id: user.id,
+      active: getValue(userData.active, user.active),
+      email: getValue(userData.email, user.email),
+      name: getValue(userData.name, user.name),
+      password: getValue(hash, user.password),
+      createdAt: user.createdAt,
+      updatedAt: new Date(),
+    };
+
+    await this.databaseProvider.raw<TInsertRow>(
+      `
+      UPDATE user SET name = ?, email = ?, password = ?, active = ?, updatedAt = ?
+      WHERE email=?;
+    `,
+      [
+        userUpdated.name,
+        userUpdated.email,
+        userUpdated.password,
+        userUpdated.active,
+        userUpdated.updatedAt,
+        email,
+      ]
+    );
+
+    if (userData.profile_id) {
+      await this.userProfilesRepository.updateByUserId(
+        user.id,
+        parseInt(userData.profile_id)
+      );
+    }
+
+    return userUpdated;
   }
 }

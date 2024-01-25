@@ -110,9 +110,11 @@ export class UsersResolver {
       userProfilesRepository,
       hashProvider
     );
-    // const updateUserService = new UpdateUserService(usersRepository);
-    // const userUpdated = await updateUserService.execute(filter, user);
-    // return userUpdated;
+    const updateUserService = new UpdateUserService(usersRepository);
+
+    const userUpdated = await updateUserService.execute(filter, user);
+
+    return userUpdated;
   }
 
   // @FieldResolver(() => Profile)

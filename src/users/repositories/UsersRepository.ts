@@ -20,8 +20,6 @@ export interface UsersRepository {
   create(user: TCreateUserDTO): Promise<UserDTO>;
   deleteById(id: number): Promise<Boolean>;
   deleteByEmail(email: string): Promise<Boolean>;
-  updateById(
-    filter: TUpdateUserFilterDTO,
-    user: TUpdateUserDTO
-  ): Promise<UserDTO>;
+  updateById(id: number, user: TUpdateUserDTO): Promise<UserDTO>;
+  updateByEmail(email: string, user: TUpdateUserDTO): Promise<UserDTO>;
 }
