@@ -44,6 +44,17 @@ export default class UsersRepository implements IUsersRepository {
     return user[0] || null;
   }
 
+  async getByEmail(email: string): Promise<UserDTO | null> {
+    const user = await this.databaseProvider.raw<TQueryRows<UserDTO>>(
+      `
+      SELECT * FROM user WHERE email=?;
+    `,
+      [email]
+    );
+
+    return user[0] || null;
+  }
+
   async index(filter: IFindUsersDTO): Promise<UserDTO[]> {
     const offset = filter.limit * filter.page;
     const users = await this.databaseProvider.raw<TQueryRows<UserDTO>>(
@@ -97,18 +108,29 @@ export default class UsersRepository implements IUsersRepository {
     return userCreated;
   }
 
-  async deleteByIdOrEmail(identifier: string): Promise<Boolean | null> {
-    // const userIndex = UserHelper.findByIdOrEmail(
-    //   identifier,
-    //   this.databaseProvider
-    // );
-    // if (userIndex < 0) {
-    //   return null;
-    // }
-    // this.databaseProvider.splice(userIndex, 1);
-    // return true;
+  async deleteById(id: number): Promise<Boolean> {
+    await this.userProfilesRepository.deleteByUserId(id);
+    await this.databaseProvider.raw<TInsertRow>(
+      `
+      DELETE FROM user WHERE id=?;
+    `,
+      [id]
+    );
 
-    return null;
+    return true;
+  }
+
+  async deleteByEmail(email: string): Promise<Boolean> {
+    const user = await this.getByEmail(email);
+    await this.userProfilesRepository.deleteByUserId(user.id);
+    await this.databaseProvider.raw<TInsertRow>(
+      `
+      DELETE FROM user WHERE email=?;
+    `,
+      [email]
+    );
+
+    return true;
   }
 
   async updateById(

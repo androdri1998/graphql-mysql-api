@@ -15,9 +15,11 @@ export type TCreateUserDTO = {
 
 export interface UsersRepository {
   getById(id: number): Promise<UserDTO | null>;
+  getByEmail(email: string): Promise<UserDTO | null>;
   index(filter: IFindUsersDTO): Promise<UserDTO[]>;
   create(user: TCreateUserDTO): Promise<UserDTO>;
-  deleteByIdOrEmail(identifier: string): Promise<Boolean | null>;
+  deleteById(id: number): Promise<Boolean>;
+  deleteByEmail(email: string): Promise<Boolean>;
   updateById(
     filter: TUpdateUserFilterDTO,
     user: TUpdateUserDTO

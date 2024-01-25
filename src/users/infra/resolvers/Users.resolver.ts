@@ -89,9 +89,11 @@ export class UsersResolver {
       userProfilesRepository,
       hashProvider
     );
-    // const deleteUserService = new DeleteUserService(usersRepository);
-    // const isUserDeleted = await deleteUserService.execute(user);
-    // return isUserDeleted;
+    const deleteUserService = new DeleteUserService(usersRepository);
+
+    const isUserDeleted = await deleteUserService.execute(user);
+
+    return isUserDeleted;
   }
 
   @Mutation(() => User, {
