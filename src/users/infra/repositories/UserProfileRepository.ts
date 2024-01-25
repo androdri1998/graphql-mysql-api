@@ -16,7 +16,7 @@ export default class UserProfilesRepository implements IUserProfilesRepository {
     this.databaseProvider = databaseProvider;
   }
 
-  async getByUserId(userId: number): Promise<UserProfileDTO> {
+  async getByUserId(userId: number): Promise<UserProfileDTO[]> {
     const userProfile = await this.databaseProvider.raw<
       TQueryRows<UserProfileDTO>
     >(
@@ -24,6 +24,22 @@ export default class UserProfilesRepository implements IUserProfilesRepository {
       SELECT * FROM user_profile WHERE userId=?;
     `,
       [userId]
+    );
+
+    return userProfile;
+  }
+
+  async getByUserIdAndProfileId(
+    userId: number,
+    profileId: number
+  ): Promise<UserProfileDTO> {
+    const userProfile = await this.databaseProvider.raw<
+      TQueryRows<UserProfileDTO>
+    >(
+      `
+      SELECT * FROM user_profile WHERE userId=? AND profileId=?;
+    `,
+      [userId, profileId]
     );
 
     return userProfile[0] || null;
@@ -69,22 +85,17 @@ export default class UserProfilesRepository implements IUserProfilesRepository {
     return true;
   }
 
-  async updateByUserId(
+  async deleteByUserIdAndProfileId(
     userId: number,
     profileId: number
-  ): Promise<UserProfileDTO> {
-    const currentDate = new Date();
-
-    await this.databaseProvider.raw<TInsertRow>(
+  ): Promise<Boolean> {
+    await this.databaseProvider.raw<TQueryRows<UserProfileDTO>>(
       `
-      UPDATE user_profile SET profileId = ?, updatedAt = ?
-      WHERE userId=?;
+      DELETE FROM user_profile WHERE userId=? AND profileId=?;
     `,
-      [profileId, currentDate, userId]
+      [userId, profileId]
     );
 
-    const userProfile = await this.getByUserId(userId);
-
-    return userProfile;
+    return true;
   }
 }

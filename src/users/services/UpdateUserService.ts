@@ -9,7 +9,8 @@ export type TUpdateUserDTO = {
   email?: string;
   password?: string;
   active?: boolean;
-  profile_id?: string;
+  addProfileIds?: string[];
+  removeProfileIds?: string[];
 };
 
 export interface IUpdateUserService {

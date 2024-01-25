@@ -1,16 +1,12 @@
 import { UserDTO } from "../dtos/User.dto";
 import { IFindUsersDTO } from "../services/FindUsersService";
-import {
-  TUpdateUserDTO,
-  TUpdateUserFilterDTO,
-} from "../services/UpdateUserService";
+import { TUpdateUserDTO } from "../services/UpdateUserService";
 
 export type TCreateUserDTO = {
   name: string;
   email: string;
   password: string;
   active: boolean;
-  profile_id: number;
 };
 
 export interface UsersRepository {

@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql";
+import { Field, ID, InputType } from "type-graphql";
 
 @InputType()
 export class AddUserInput {
@@ -10,4 +10,7 @@ export class AddUserInput {
 
   @Field()
   password: string;
+
+  @Field((type) => [ID])
+  profileIds: string[];
 }

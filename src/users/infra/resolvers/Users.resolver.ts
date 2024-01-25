@@ -32,13 +32,7 @@ import FindProfileFromUserService from "../../../profiles/services/implementatio
 export class UsersResolver {
   @Query(() => User, { nullable: true })
   async user(@Arg("data") userData: SearchUserInput) {
-    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
-    const hashProvider = new HashProvider();
-    const usersRepository = new UsersRepository(
-      databaseProvider,
-      userProfilesRepository,
-      hashProvider
-    );
+    const usersRepository = new UsersRepository(databaseProvider);
     const findUserService = new FindUserService(usersRepository);
 
     const user = await findUserService.execute(parseInt(userData.id));
@@ -48,13 +42,7 @@ export class UsersResolver {
 
   @Query(() => [User], { nullable: "items" })
   async users(@Arg("data") filter: SearchUsersInput) {
-    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
-    const hashProvider = new HashProvider();
-    const usersRepository = new UsersRepository(
-      databaseProvider,
-      userProfilesRepository,
-      hashProvider
-    );
+    const usersRepository = new UsersRepository(databaseProvider);
     const findUsersService = new FindUsersService(usersRepository);
 
     const users = await findUsersService.execute(filter);
@@ -66,12 +54,12 @@ export class UsersResolver {
   async addUser(@Arg("data") newUser: AddUserInput) {
     const userProfilesRepository = new UserProfilesRepository(databaseProvider);
     const hashProvider = new HashProvider();
-    const usersRepository = new UsersRepository(
-      databaseProvider,
+    const usersRepository = new UsersRepository(databaseProvider);
+    const createUserService = new CreateUserService(
+      usersRepository,
       userProfilesRepository,
       hashProvider
     );
-    const createUserService = new CreateUserService(usersRepository);
 
     const user = await createUserService.execute(newUser);
 
@@ -83,13 +71,12 @@ export class UsersResolver {
   })
   async deleteUser(@Arg("data") user: DeleteUserInput) {
     const userProfilesRepository = new UserProfilesRepository(databaseProvider);
-    const hashProvider = new HashProvider();
-    const usersRepository = new UsersRepository(
-      databaseProvider,
-      userProfilesRepository,
-      hashProvider
+
+    const usersRepository = new UsersRepository(databaseProvider);
+    const deleteUserService = new DeleteUserService(
+      usersRepository,
+      userProfilesRepository
     );
-    const deleteUserService = new DeleteUserService(usersRepository);
 
     const isUserDeleted = await deleteUserService.execute(user);
 
@@ -105,19 +92,19 @@ export class UsersResolver {
   ) {
     const userProfilesRepository = new UserProfilesRepository(databaseProvider);
     const hashProvider = new HashProvider();
-    const usersRepository = new UsersRepository(
-      databaseProvider,
+    const usersRepository = new UsersRepository(databaseProvider);
+    const updateUserService = new UpdateUserService(
+      usersRepository,
       userProfilesRepository,
       hashProvider
     );
-    const updateUserService = new UpdateUserService(usersRepository);
 
     const userUpdated = await updateUserService.execute(filter, user);
 
     return userUpdated;
   }
 
-  @FieldResolver(() => Profile)
+  @FieldResolver(() => [Profile], { nullable: "items" })
   async profile(@Root() user: UserInput) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
     const userProfilesRepository = new UserProfilesRepository(databaseProvider);

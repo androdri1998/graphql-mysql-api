@@ -72,6 +72,7 @@ input AddUserInput {
   email: String!
   name: String!
   password: String!
+  profileIds: [ID!]!
 }
 
 input DeleteUserInput {
@@ -83,6 +84,11 @@ input SearchUserInput {
   id: ID!
 }
 
+input SearchUsersInput {
+  limit: Float!
+  page: Float!
+}
+
 input UpdateUserFilterInput {
   email: String
   id: ID
@@ -90,10 +96,11 @@ input UpdateUserFilterInput {
 
 input UpdateUserInput {
   active: Boolean
+  addProfileIds: [ID!]
   email: String
   name: String
   password: String
-  profile_id: ID
+  removeProfileIds: [ID!]
 }
 
 type User {
@@ -102,12 +109,8 @@ type User {
   email: String!
   id: ID!
   name: String!
+  profile: [Profile]!
   updatedAt: DateTimeISO!
-}
-
-input SearchUsersInput {
-  limit: Float!
-  page: Float!
 }
 
 type Mutation {

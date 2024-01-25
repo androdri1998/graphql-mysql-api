@@ -3,9 +3,7 @@ import {
   TInsertRow,
   TQueryRows,
 } from "../../../app/providers/DatabaseProvider";
-import { IHashProvider } from "../../../app/providers/HashProvider";
 import { UserDTO } from "../../dtos/User.dto";
-import { IUserProfilesRepository } from "../../repositories/UserProfileRepository";
 import {
   TCreateUserDTO,
   UsersRepository as IUsersRepository,
@@ -15,17 +13,9 @@ import { TUpdateUserDTO } from "../../services/UpdateUserService";
 
 export default class UsersRepository implements IUsersRepository {
   databaseProvider: IDatabaseProvider;
-  hashProvider: IHashProvider;
-  userProfilesRepository: IUserProfilesRepository;
 
-  constructor(
-    databaseProvider: IDatabaseProvider,
-    userProfilesRepository: IUserProfilesRepository,
-    hashProvider: IHashProvider
-  ) {
+  constructor(databaseProvider: IDatabaseProvider) {
     this.databaseProvider = databaseProvider;
-    this.hashProvider = hashProvider;
-    this.userProfilesRepository = userProfilesRepository;
   }
 
   async getById(id: number): Promise<UserDTO | null> {
@@ -63,13 +53,12 @@ export default class UsersRepository implements IUsersRepository {
   }
 
   async create(userDTO: TCreateUserDTO): Promise<UserDTO> {
-    const hash = await this.hashProvider.generate(userDTO.password);
     const currentDate = new Date();
 
     const user = {
       name: userDTO.name,
       email: userDTO.email,
-      password: hash,
+      password: userDTO.password,
       active: userDTO.active,
       createdAt: currentDate,
       updatedAt: currentDate,
@@ -95,16 +84,10 @@ export default class UsersRepository implements IUsersRepository {
       id: userResponse.insertId,
     };
 
-    await this.userProfilesRepository.create(
-      userCreated.id,
-      userDTO.profile_id
-    );
-
     return userCreated;
   }
 
   async deleteById(id: number): Promise<Boolean> {
-    await this.userProfilesRepository.deleteByUserId(id);
     await this.databaseProvider.raw<TInsertRow>(
       `
       DELETE FROM user WHERE id=?;
@@ -116,8 +99,6 @@ export default class UsersRepository implements IUsersRepository {
   }
 
   async deleteByEmail(email: string): Promise<Boolean> {
-    const user = await this.getByEmail(email);
-    await this.userProfilesRepository.deleteByUserId(user.id);
     await this.databaseProvider.raw<TInsertRow>(
       `
       DELETE FROM user WHERE email=?;
@@ -129,9 +110,6 @@ export default class UsersRepository implements IUsersRepository {
   }
 
   async updateById(id: number, userData: TUpdateUserDTO): Promise<UserDTO> {
-    const hash = userData.password
-      ? await this.hashProvider.generate(userData.password)
-      : undefined;
     const user = await this.getById(id);
 
     const getValue = (firstValue, secondValue) => {
@@ -143,7 +121,7 @@ export default class UsersRepository implements IUsersRepository {
       active: getValue(userData.active, user.active),
       email: getValue(userData.email, user.email),
       name: getValue(userData.name, user.name),
-      password: getValue(hash, user.password),
+      password: getValue(userData.password, user.password),
       createdAt: user.createdAt,
       updatedAt: new Date(),
     };
@@ -163,13 +141,6 @@ export default class UsersRepository implements IUsersRepository {
       ]
     );
 
-    if (userData.profile_id) {
-      await this.userProfilesRepository.updateByUserId(
-        user.id,
-        parseInt(userData.profile_id)
-      );
-    }
-
     return userUpdated;
   }
 
@@ -177,9 +148,6 @@ export default class UsersRepository implements IUsersRepository {
     email: string,
     userData: TUpdateUserDTO
   ): Promise<UserDTO> {
-    const hash = userData.password
-      ? await this.hashProvider.generate(userData.password)
-      : undefined;
     const user = await this.getByEmail(email);
 
     const getValue = (firstValue, secondValue) => {
@@ -191,7 +159,7 @@ export default class UsersRepository implements IUsersRepository {
       active: getValue(userData.active, user.active),
       email: getValue(userData.email, user.email),
       name: getValue(userData.name, user.name),
-      password: getValue(hash, user.password),
+      password: getValue(userData.password, user.password),
       createdAt: user.createdAt,
       updatedAt: new Date(),
     };
@@ -210,13 +178,6 @@ export default class UsersRepository implements IUsersRepository {
         email,
       ]
     );
-
-    if (userData.profile_id) {
-      await this.userProfilesRepository.updateByUserId(
-        user.id,
-        parseInt(userData.profile_id)
-      );
-    }
 
     return userUpdated;
   }

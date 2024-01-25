@@ -4,6 +4,7 @@ export type CreateUserDTO = {
   name: string;
   email: string;
   password: string;
+  profileIds: string[];
 };
 
 export interface ICreateUserService {

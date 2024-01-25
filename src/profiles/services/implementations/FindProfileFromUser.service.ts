@@ -17,10 +17,17 @@ export default class FindProfileFromUserService
     this.userProfilesRepository = userProfilesRepository;
   }
 
-  async execute(userId: number): Promise<ProfileDTO | null> {
-    const user = await this.userProfilesRepository.getByUserId(userId);
-    const profile = await this.profilesRepository.getById(user.profileId);
+  async execute(userId: number): Promise<ProfileDTO[]> {
+    const userProfiles = await this.userProfilesRepository.getByUserId(userId);
 
-    return profile;
+    let profiles: ProfileDTO[] = [];
+    for (let index = 0; index < userProfiles.length; index++) {
+      const profileId = userProfiles[index].profileId;
+
+      const profile = await this.profilesRepository.getById(profileId);
+      profiles.push(profile);
+    }
+
+    return profiles;
   }
 }

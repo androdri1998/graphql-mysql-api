@@ -7,8 +7,15 @@ export type UserProfileDTO = {
 };
 
 export interface IUserProfilesRepository {
-  getByUserId(userId: number): Promise<UserProfileDTO | null>;
+  getByUserId(userId: number): Promise<UserProfileDTO[]>;
+  getByUserIdAndProfileId(
+    userId: number,
+    profileId: number
+  ): Promise<UserProfileDTO | null>;
   create(userId: number, profileId: number): Promise<UserProfileDTO>;
   deleteByUserId(userId: number): Promise<Boolean | null>;
-  updateByUserId(userId: number, profileId: number): Promise<UserProfileDTO>;
+  deleteByUserIdAndProfileId(
+    userId: number,
+    profileId: number
+  ): Promise<Boolean | null>;
 }

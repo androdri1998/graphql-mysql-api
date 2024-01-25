@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { UserProfile } from "./UserProfile";
 
 @Entity()
 export class User {
@@ -36,4 +37,7 @@ export class User {
     nullable: false,
   })
   updatedAt: Date;
+
+  @OneToMany(() => UserProfile, (userProfiles) => userProfiles.user)
+  userProfiles: UserProfile[];
 }

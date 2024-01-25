@@ -1,4 +1,6 @@
+import { IHashProvider } from "../../../app/providers/HashProvider";
 import { UserDTO } from "../../dtos/User.dto";
+import { IUserProfilesRepository } from "../../repositories/UserProfileRepository";
 import { UsersRepository } from "../../repositories/UsersRepository";
 import {
   IUpdateUserService,
@@ -8,21 +10,63 @@ import {
 
 export class UpdateUserService implements IUpdateUserService {
   usersRepository: UsersRepository;
+  userProfilesRepository: IUserProfilesRepository;
+  hashProvider: IHashProvider;
 
-  constructor(usersRepository: UsersRepository) {
+  constructor(
+    usersRepository: UsersRepository,
+    userProfilesRepository: IUserProfilesRepository,
+    hashProvider: IHashProvider
+  ) {
     this.usersRepository = usersRepository;
+    this.userProfilesRepository = userProfilesRepository;
+    this.hashProvider = hashProvider;
   }
 
   async execute(
     { email, id }: TUpdateUserFilterDTO,
     user: TUpdateUserDTO
   ): Promise<UserDTO> {
+    let userUpdated: UserDTO | null = null;
+
+    user.password = user.password
+      ? await this.hashProvider.generate(user.password)
+      : undefined;
+
     if (id) {
-      return await this.usersRepository.updateById(parseInt(id), user);
+      userUpdated = await this.usersRepository.updateById(parseInt(id), user);
     }
 
     if (email) {
-      return await this.usersRepository.updateByEmail(email, user);
+      userUpdated = await this.usersRepository.updateByEmail(email, user);
     }
+
+    if (user.addProfileIds) {
+      for (let index = 0; index < user.addProfileIds.length; index++) {
+        const profileId = parseInt(user.addProfileIds[index]);
+
+        const userProfile =
+          await this.userProfilesRepository.getByUserIdAndProfileId(
+            userUpdated.id,
+            profileId
+          );
+        if (!userProfile) {
+          await this.userProfilesRepository.create(userUpdated.id, profileId);
+        }
+      }
+    }
+
+    if (user.removeProfileIds) {
+      for (let index = 0; index < user.removeProfileIds.length; index++) {
+        const profileId = parseInt(user.removeProfileIds[index]);
+
+        await this.userProfilesRepository.deleteByUserIdAndProfileId(
+          userUpdated.id,
+          profileId
+        );
+      }
+    }
+
+    return userUpdated;
   }
 }

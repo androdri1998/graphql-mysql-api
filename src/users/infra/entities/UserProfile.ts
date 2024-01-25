@@ -36,7 +36,7 @@ export class UserProfile {
   })
   updatedAt: Date;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.userProfiles)
   @JoinColumn({ name: "userId" })
   user: User;
 
