@@ -12,10 +12,7 @@ export class UpdateUserInput {
   password: string;
 
   @Field((type) => [ID], { nullable: true })
-  addProfileIds: string[];
-
-  @Field((type) => [ID], { nullable: true })
-  removeProfileIds: string[];
+  profileIds: string[];
 
   @Field({ nullable: true })
   active: boolean;

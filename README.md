@@ -96,11 +96,10 @@ input UpdateUserFilterInput {
 
 input UpdateUserInput {
   active: Boolean
-  addProfileIds: [ID!]
+  profileIds: [ID!]
   email: String
   name: String
   password: String
-  removeProfileIds: [ID!]
 }
 
 type User {

@@ -41,9 +41,11 @@ export class UpdateUserService implements IUpdateUserService {
       userUpdated = await this.usersRepository.updateByEmail(email, user);
     }
 
-    if (user.addProfileIds) {
-      for (let index = 0; index < user.addProfileIds.length; index++) {
-        const profileId = parseInt(user.addProfileIds[index]);
+    if (user.profileIds) {
+      await this.userProfilesRepository.deleteByUserId(userUpdated.id);
+
+      for (let index = 0; index < user.profileIds.length; index++) {
+        const profileId = parseInt(user.profileIds[index]);
 
         const userProfile =
           await this.userProfilesRepository.getByUserIdAndProfileId(
@@ -53,17 +55,6 @@ export class UpdateUserService implements IUpdateUserService {
         if (!userProfile) {
           await this.userProfilesRepository.create(userUpdated.id, profileId);
         }
-      }
-    }
-
-    if (user.removeProfileIds) {
-      for (let index = 0; index < user.removeProfileIds.length; index++) {
-        const profileId = parseInt(user.removeProfileIds[index]);
-
-        await this.userProfilesRepository.deleteByUserIdAndProfileId(
-          userUpdated.id,
-          profileId
-        );
       }
     }
 
