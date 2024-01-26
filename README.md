@@ -108,7 +108,7 @@ type User {
   email: String!
   id: ID!
   name: String!
-  profile: [Profile]!
+  profiles: [Profile]!
   updatedAt: DateTimeISO!
 }
 
@@ -147,7 +147,8 @@ input DeleteProfileInput {
 }
 
 input SearchProfileInput {
-  id: ID!
+  id: ID
+  name: String
 }
 
 input UpdateProfileFilterInput {

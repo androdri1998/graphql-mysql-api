@@ -23,7 +23,7 @@ export class ProfilesResolver {
     const profilesRepository = new ProfilesRepository(databaseProvider);
     const findProfileService = new FindProfileService(profilesRepository);
 
-    const profileFound = await findProfileService.execute(parseInt(profile.id));
+    const profileFound = await findProfileService.execute(profile);
 
     return profileFound;
   }

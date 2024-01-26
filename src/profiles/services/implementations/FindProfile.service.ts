@@ -1,6 +1,6 @@
 import { ProfileDTO } from "../../dtos/Profile.dto";
 import { ProfilesRepository } from "../../repositories/ProfilesRepository";
-import { IFindProfileService } from "../FindProfileService";
+import { IFindProfileDTO, IFindProfileService } from "../FindProfileService";
 
 export default class FindProfileService implements IFindProfileService {
   profilesRepository: ProfilesRepository;
@@ -9,8 +9,13 @@ export default class FindProfileService implements IFindProfileService {
     this.profilesRepository = profilesRepository;
   }
 
-  async execute(id: number): Promise<ProfileDTO | null> {
-    const profile = await this.profilesRepository.getById(id);
-    return profile;
+  async execute({ id, name }: IFindProfileDTO): Promise<ProfileDTO | null> {
+    if (id) {
+      return await this.profilesRepository.getById(parseInt(id));
+    }
+
+    if (name) {
+      return await this.profilesRepository.getByName(name);
+    }
   }
 }
