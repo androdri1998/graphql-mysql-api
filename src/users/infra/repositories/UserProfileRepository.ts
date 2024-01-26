@@ -4,6 +4,7 @@ import {
   TInsertRow,
   TQueryRows,
 } from "../../../app/providers/DatabaseProvider";
+import { ProfileDTO } from "../../../profiles/dtos/Profile.dto";
 import {
   IUserProfilesRepository,
   UserProfileDTO,
@@ -14,35 +15,6 @@ export default class UserProfilesRepository implements IUserProfilesRepository {
 
   constructor(databaseProvider: IDatabaseProvider) {
     this.databaseProvider = databaseProvider;
-  }
-
-  async getByUserId(userId: number): Promise<UserProfileDTO[]> {
-    const userProfile = await this.databaseProvider.raw<
-      TQueryRows<UserProfileDTO>
-    >(
-      `
-      SELECT * FROM user_profile WHERE userId=?;
-    `,
-      [userId]
-    );
-
-    return userProfile;
-  }
-
-  async getByUserIdAndProfileId(
-    userId: number,
-    profileId: number
-  ): Promise<UserProfileDTO> {
-    const userProfile = await this.databaseProvider.raw<
-      TQueryRows<UserProfileDTO>
-    >(
-      `
-      SELECT * FROM user_profile WHERE userId=? AND profileId=?;
-    `,
-      [userId, profileId]
-    );
-
-    return userProfile[0] || null;
   }
 
   async create(userId: number, profileId: number): Promise<UserProfileDTO> {
@@ -80,20 +52,6 @@ export default class UserProfilesRepository implements IUserProfilesRepository {
       DELETE FROM user_profile WHERE userId=?;
     `,
       [userId]
-    );
-
-    return true;
-  }
-
-  async deleteByUserIdAndProfileId(
-    userId: number,
-    profileId: number
-  ): Promise<Boolean> {
-    await this.databaseProvider.raw<TQueryRows<UserProfileDTO>>(
-      `
-      DELETE FROM user_profile WHERE userId=? AND profileId=?;
-    `,
-      [userId, profileId]
     );
 
     return true;

@@ -6,6 +6,7 @@ import {
 } from "../services/UpdateProfileService";
 
 export interface ProfilesRepository {
+  getByUserId(userId: number): Promise<ProfileDTO[]>;
   getById(id: number): Promise<ProfileDTO | null>;
   getByName(name: string): Promise<ProfileDTO | null>;
   index(filter: IFindProfilesFilterDTO): Promise<ProfileDTO[]>;

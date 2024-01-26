@@ -47,14 +47,7 @@ export class UpdateUserService implements IUpdateUserService {
       for (let index = 0; index < user.profileIds.length; index++) {
         const profileId = parseInt(user.profileIds[index]);
 
-        const userProfile =
-          await this.userProfilesRepository.getByUserIdAndProfileId(
-            userUpdated.id,
-            profileId
-          );
-        if (!userProfile) {
-          await this.userProfilesRepository.create(userUpdated.id, profileId);
-        }
+        await this.userProfilesRepository.create(userUpdated.id, profileId);
       }
     }
 

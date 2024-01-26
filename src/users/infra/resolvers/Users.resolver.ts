@@ -105,12 +105,10 @@ export class UsersResolver {
   }
 
   @FieldResolver(() => [Profile], { nullable: "items" })
-  async profile(@Root() user: UserInput) {
+  async profiles(@Root() user: UserInput) {
     const profilesRepository = new ProfilesRepository(databaseProvider);
-    const userProfilesRepository = new UserProfilesRepository(databaseProvider);
     const findProfileFromUserService = new FindProfileFromUserService(
-      profilesRepository,
-      userProfilesRepository
+      profilesRepository
     );
 
     const profile = await findProfileFromUserService.execute(parseInt(user.id));

@@ -123,4 +123,24 @@ export default class ProfilesRepository implements IProfilesRepository {
 
     return profileUpdated;
   }
+
+  async getByUserId(userId: number): Promise<ProfileDTO[]> {
+    const userProfile = await this.databaseProvider.raw<TQueryRows<ProfileDTO>>(
+      `
+      SELECT 
+        pr.id, 
+        pr.name, 
+        pr.label, 
+        pr.createdAt, 
+        pr.createdAt, 
+        pr.updatedAt
+      FROM user_profile up
+      INNER JOIN profile pr ON pr.id = up.profileId
+      WHERE userId=?;
+    `,
+      [userId]
+    );
+
+    return userProfile;
+  }
 }
